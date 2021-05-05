@@ -24,13 +24,15 @@ library(sf)
 ## Read Boundary SA Shapefile
 ```{r}
 RKL <- st_read("C:/Users/Caroline/Documents/Graduate Courses/Spring 2021 Courses/GEOG 382/Project/WCS/inst/extdata/boundary/RKL.shp")
+RKL_proj <- st_read("C:/Users/Caroline/Documents/Graduate Courses/Spring 2021 Courses/GEOG 382/Project/WCS/inst/extdata/boundary/RKL_proj.vct")
 ```
 
+# Precipitation
 ## Read WorldClim data
 ```{r}
 # import precipitation 2000-2009 & 2010 to 2018  
 # set working directory to where data is located
-setwd("D:/WCS/data/precip/")
+setwd("D:/WCS/data/precip/monthly_clipped")
 
 # list files based on prefix
 precip_list = list.files(getwd(), pattern="wc2.1_2.5m_prec_") 
@@ -45,6 +47,17 @@ names(precip_r)
 # clip precipitation 2000 - 2018 to study area
 precip_crop <- crop(precip_r, RKL) # crop to extent
 precip_clip <- mask(precip_crop, RKL) # mask cropped data to study area
+```
+
+# Export R Stack- no analysis just clipped to SA RKL
+```{r}
+writeRaster(precip_clip, filename=names(precip_clip), "D:/WCS/data/precip/monthly_clipped/precip_monthly_2000_2018.tif")
+writeRaster(precip_clip, names(precip_clip), bylayer=TRUE,format="GTiff", "D:/WCS/data/precip/monthly_clipped/", overwrite = TRUE)
+
+precip_clip_unstack <- unstack(precip_clip)
+names(precip_clip_unstack) <- names(precip_clip)
+#outputnames <- paste(seq_along(precip_clip_unstack), ".tiff",sep="")
+for(i in seq_along(precip_clip_unstack)){writeRaster(precip_clip_unstack[[i]], file=precip_list[i], overwrite = TRUE)}
 ```
 
 ## Climate Spatial Analysis
@@ -193,7 +206,7 @@ p_2000_2018 <- stack(precip_2000, precip_2001, precip_2002, precip_2003, precip_
 precip_2000_2018 <- calc(p_2000_2018, fun = mean, na.rm = T)
 ```
 
-### Export Processed data
+## Export Processed data
 ```{r}
 writeRaster(precip_2000, "D:/WCS/data/precip/r_outputs/precip_annual_2000.rst", overwrite = TRUE)
 writeRaster(precip_2001, "D:/WCS/data/precip/r_outputs/precip_annual_2001.rst", overwrite = TRUE)
@@ -214,5 +227,175 @@ writeRaster(precip_2015, "D:/WCS/data/precip/r_outputs/precip_annual_2015.rst", 
 writeRaster(precip_2016, "D:/WCS/data/precip/r_outputs/precip_annual_2016.rst", overwrite = TRUE)
 writeRaster(precip_2017, "D:/WCS/data/precip/r_outputs/precip_annual_2017.rst", overwrite = TRUE)
 writeRaster(precip_2018, "D:/WCS/data/precip/r_outputs/precip_annual_2018.rst", overwrite = TRUE)
+writeRaster(precip_2000_2018, "D:/WCS/data/precip/r_outputs/precip_annual_2000_2018.rst", overwrite = TRUE)
+```
+
+### Visualizations Precipitation
+#### Import Libraries
+```{r}
+library(lattice)
+library(rasterVis)
+library(GISTools) 
+library(viridisLite)
+library(sp)
+library(ggsn)
+library(prettymapr)
+library(ggspatial)
+```
+
+#### Map - Annual Mean Precipitation 2000 - 2018
+```{r}
+col = viridis(100)
+par(mfrow=c(2,2))
+p1 <- levelplot(precip_2000_2018,
+                margin = FALSE,
+                xlab = "",
+                ylab = "",
+                scales=list(draw = FALSE),
+                main = "Annual Mean Precipitation", 
+                col.regions = rev(col),
+                par.settings= list(panel.background = list(col = "grey")),
+                colorkey = list(axis.line = list(col = "white"), 
+                           axis.text = list(col = "black"))) 
+```
+
+# Vegetation - 2000
+## Read MODIS EVI data
+```{r}
+# import MODIS Veg Indices  
+# set working directory to where data is located
+setwd("D:/WCS/data/evi/GEE/MODIS_EVI-20210427T034248Z-001/MODIS_EVI/EVI2000")
+
+# list files based on prefix
+evi2000_list = list.files(getwd(), pattern="2000_") 
+
+# Create raster stack
+evi2000_r <- stack(evi2000_list)
+names(evi2000_r) 
+```
+
+## Calculate max evi by month per year
+### 2000
+```{r}
+#subset by month for 2000
+evi2000_2 <- raster::subset(evi2000_r, 1:1)
+evi2000_3 <- raster::subset(evi2000_r, 2:3)
+evi2000_4 <- raster::subset(evi2000_r, 4:5)
+evi2000_5 <- raster::subset(evi2000_r, 6:7)
+evi2000_6 <- raster::subset(evi2000_r, 8:9)
+evi2000_7 <- raster::subset(evi2000_r, 10:11)
+evi2000_8 <- raster::subset(evi2000_r, 12:13)
+evi2000_9 <- raster::subset(evi2000_r, 14:15)
+evi2000_10 <- raster::subset(evi2000_r, 16:17)
+evi2000_11 <- raster::subset(evi2000_r, 17:18)
+evi2000_12 <- raster::subset(evi2000_r, 19:20)
+
+# calculate max evi by month for 2000
+evi2000_3_max <- calc(evi2000_3, fun = max, na.rm = T)
+evi2000_4_max <- calc(evi2000_4, fun = max, na.rm = T)
+evi2000_5_max <- calc(evi2000_5, fun = max, na.rm = T)
+evi2000_6_max <- calc(evi2000_6, fun = max, na.rm = T)
+evi2000_7_max <- calc(evi2000_7, fun = max, na.rm = T)
+evi2000_8_max <- calc(evi2000_8, fun = max, na.rm = T)
+evi2000_9_max <- calc(evi2000_9, fun = max, na.rm = T)
+evi2000_10_max <- calc(evi2000_10, fun = max, na.rm = T)
+evi2000_11_max <- calc(evi2000_11, fun = max, na.rm = T)
+evi2000_12_max <- calc(evi2000_12, fun = max, na.rm = T)
+
+# raster stack
+evi2000_max_stack <- stack(evi2000_2, evi2000_3_max, evi2000_4_max,
+                           evi2000_5_max, evi2000_6_max, evi2000_7_max,
+                           evi2000_8_max, evi2000_9_max, evi2000_10_max,
+                           evi2000_11_max, evi2000_12_max)
+```
+
+## Export EVI Max data 2000
+```{r}
+#set wd for output
+setwd("D:/WCS/data/evi/r_outputs")
+
+# name output rasters
+date <- seq(as.Date("2000/02/01"), by = "month", length.out = 11)
+month <- substr(date,1, 7)
+
+filename = paste0("evi_",month)
+names(evi2000_max_stack) <- filename
+
+# write raster stack
+evi2000_max_unstack <- unstack(evi2000_max_stack)
+names(evi2000_max_unstack) <- names(evi2000_max_stack)
+for(i in seq_along(evi2000_max_unstack)){writeRaster(evi2000_max_unstack[[i]], file=filename[i], format="GTiff", overwrite = TRUE)}
+```
+
+
+# Vegetation - 2001
+## Read MODIS EVI data
+```{r}
+# import MODIS Veg Indices  
+# set working directory to where data is located
+setwd("D:/WCS/data/evi/GEE/MODIS_EVI-20210427T034248Z-001/MODIS_EVI/EVI2001")
+
+# list files based on prefix
+evi2001_list = list.files(getwd(), pattern="2001_") 
+
+# Create raster stack
+evi2001_r <- stack(evi2001_list)
+names(evi2001_r) 
+```
+
+
+## Calculate max evi by month per year
+### 2000
+```{r}
+#subset by month for 2000
+evi2001_1 <- raster::subset(evi2001_r, 1:2)
+evi2001_2 <- raster::subset(evi2001_r, 3:4)
+evi2001_3 <- raster::subset(evi2001_r, 5:6)
+evi2001_4 <- raster::subset(evi2001_r, 7:8)
+evi2001_5 <- raster::subset(evi2001_r, 9:10)
+evi2001_6 <- raster::subset(evi2001_r, 11:12)
+evi2001_7 <- raster::subset(evi2001_r, 13:14)
+evi2001_8 <- raster::subset(evi2001_r, 15:16)
+evi2001_9 <- raster::subset(evi2001_r, 17:18)
+evi2001_10 <- raster::subset(evi2001_r, 19:19)
+evi2001_11 <- raster::subset(evi2001_r, 20:21)
+evi2001_12 <- raster::subset(evi2001_r, 22:23)
+
+# calculate max evi by month for 2000
+evi2001_1_max <- calc(evi2001_1, fun = max, na.rm = T)
+evi2001_2_max <- calc(evi2001_2, fun = max, na.rm = T)
+evi2001_3_max <- calc(evi2001_3, fun = max, na.rm = T)
+evi2001_4_max <- calc(evi2001_4, fun = max, na.rm = T)
+evi2001_5_max <- calc(evi2001_5, fun = max, na.rm = T)
+evi2001_6_max <- calc(evi2001_6, fun = max, na.rm = T)
+evi2001_7_max <- calc(evi2001_7, fun = max, na.rm = T)
+evi2001_8_max <- calc(evi2001_8, fun = max, na.rm = T)
+evi2001_9_max <- calc(evi2001_9, fun = max, na.rm = T)
+evi2001_11_max <- calc(evi2001_11, fun = max, na.rm = T)
+evi2001_12_max <- calc(evi2001_12, fun = max, na.rm = T)
+
+# raster stack
+evi2001_max_stack <- stack(evi2001_1_max, evi2001_2_max, evi2001_3_max, 
+                           evi2001_4_max, evi2001_5_max, evi2001_6_max, 
+                           evi2001_7_max, evi2001_8_max, evi2001_9_max, 
+                           evi2001_10, evi2001_11_max, evi2001_12_max)
+```
+
+## Export EVI Max data 2000
+```{r}
+#set wd for output
+setwd("D:/WCS/data/evi/r_outputs")
+
+# name output rasters
+date <- seq(as.Date("2001/01/01"), by = "month", length.out = 12)
+month <- substr(date,1, 7)
+
+filename = paste0("evi_",month)
+names(evi2001_max_stack) <- filename
+
+# write raster stack
+evi2001_max_unstack <- unstack(evi2001_max_stack)
+names(evi2001_max_unstack) <- names(evi2001_max_stack)
+for(i in seq_along(evi2001_max_unstack)){writeRaster(evi2001_max_unstack[[i]], file=filename[i], format="GTiff", overwrite = TRUE)}
 ```
 
