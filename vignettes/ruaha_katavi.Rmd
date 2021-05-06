@@ -1435,8 +1435,8 @@ evi2016_6 <- raster::subset(evi2016_r, 11:12)
 evi2016_7 <- raster::subset(evi2016_r, 13:14)
 evi2016_8 <- raster::subset(evi2016_r, 15:16)
 evi2016_9 <- raster::subset(evi2016_r, 17:18)
-evi2016_10 <- raster::subset(evi2016_r, 19:19)
-evi2016_11 <- raster::subset(evi2016_r, 20:21)
+evi2016_10 <- raster::subset(evi2016_r, 19:20)
+evi2016_11 <- raster::subset(evi2016_r, 21:21)
 evi2016_12 <- raster::subset(evi2016_r, 22:23)
 
 # calculate max evi by month for 2016
@@ -1449,17 +1449,17 @@ evi2016_6_max <- calc(evi2016_6, fun = max, na.rm = T)
 evi2016_7_max <- calc(evi2016_7, fun = max, na.rm = T)
 evi2016_8_max <- calc(evi2016_8, fun = max, na.rm = T)
 evi2016_9_max <- calc(evi2016_9, fun = max, na.rm = T)
-evi2016_11_max <- calc(evi2016_11, fun = max, na.rm = T)
+evi2016_10_max <- calc(evi2016_10, fun = max, na.rm = T)
 evi2016_12_max <- calc(evi2016_12, fun = max, na.rm = T)
 
 # raster stack
 evi2016_max_stack <- stack(evi2016_1_max, evi2016_2_max, evi2016_3_max, 
                            evi2016_4_max, evi2016_5_max, evi2016_6_max, 
                            evi2016_7_max, evi2016_8_max, evi2016_9_max, 
-                           evi2016_10, evi2016_11_max, evi2016_12_max)
+                           evi2016_10_max, evi2016_11, evi2016_12_max)
 ```
 
-## Export EVI Max data 2015
+## Export EVI Max data 2016
 ```{r}
 #set wd for output
 setwd("D:/WCS/data/evi/r_outputs")
@@ -1475,4 +1475,292 @@ names(evi2016_max_stack) <- filename
 evi2016_max_unstack <- unstack(evi2016_max_stack)
 names(evi2016_max_unstack) <- names(evi2016_max_stack)
 for(i in seq_along(evi2016_max_unstack)){writeRaster(evi2016_max_unstack[[i]], file=filename[i], format="GTiff", overwrite = TRUE)}
+```
+
+--------------------------------------------------------------------------------
+# Vegetation - 2017
+## Read MODIS EVI data
+```{r}
+# import MODIS Veg Indices  
+# set working directory to where data is located
+setwd("D:/WCS/data/evi/GEE/MODIS_EVI-20210427T034248Z-001/MODIS_EVI/EVI2017")
+
+# list files based on prefix
+evi2017_list = list.files(getwd(), pattern="2017_") 
+
+# Create raster stack
+evi2017_r <- stack(evi2017_list)
+names(evi2017_r) 
+```
+
+
+## Calculate max evi by month per year
+### 2017
+```{r}
+#subset by month for 2017
+evi2017_1 <- raster::subset(evi2017_r, 1:2)
+evi2017_2 <- raster::subset(evi2017_r, 3:4)
+evi2017_3 <- raster::subset(evi2017_r, 5:6)
+evi2017_4 <- raster::subset(evi2017_r, 7:8)
+evi2017_5 <- raster::subset(evi2017_r, 9:10)
+evi2017_6 <- raster::subset(evi2017_r, 11:12)
+evi2017_7 <- raster::subset(evi2017_r, 13:14)
+evi2017_8 <- raster::subset(evi2017_r, 15:16)
+evi2017_9 <- raster::subset(evi2017_r, 17:18)
+evi2017_10 <- raster::subset(evi2017_r, 19:19)
+evi2017_11 <- raster::subset(evi2017_r, 20:21)
+evi2017_12 <- raster::subset(evi2017_r, 22:23)
+
+# calculate max evi by month for 2017
+evi2017_1_max <- calc(evi2017_1, fun = max, na.rm = T)
+evi2017_2_max <- calc(evi2017_2, fun = max, na.rm = T)
+evi2017_3_max <- calc(evi2017_3, fun = max, na.rm = T)
+evi2017_4_max <- calc(evi2017_4, fun = max, na.rm = T)
+evi2017_5_max <- calc(evi2017_5, fun = max, na.rm = T)
+evi2017_6_max <- calc(evi2017_6, fun = max, na.rm = T)
+evi2017_7_max <- calc(evi2017_7, fun = max, na.rm = T)
+evi2017_8_max <- calc(evi2017_8, fun = max, na.rm = T)
+evi2017_9_max <- calc(evi2017_9, fun = max, na.rm = T)
+evi2017_11_max <- calc(evi2017_11, fun = max, na.rm = T)
+evi2017_12_max <- calc(evi2017_12, fun = max, na.rm = T)
+
+# raster stack
+evi2017_max_stack <- stack(evi2017_1_max, evi2017_2_max, evi2017_3_max, 
+                           evi2017_4_max, evi2017_5_max, evi2017_6_max, 
+                           evi2017_7_max, evi2017_8_max, evi2017_9_max, 
+                           evi2017_10, evi2017_11_max, evi2017_12_max)
+```
+
+## Export EVI Max data 2017
+```{r}
+#set wd for output
+setwd("D:/WCS/data/evi/r_outputs")
+
+# name output rasters
+date <- seq(as.Date("2017/01/01"), by = "month", length.out = 12)
+month <- substr(date,1, 7)
+
+filename = paste0("evi_",month)
+names(evi2017_max_stack) <- filename
+
+# write raster stack
+evi2017_max_unstack <- unstack(evi2017_max_stack)
+names(evi2017_max_unstack) <- names(evi2017_max_stack)
+for(i in seq_along(evi2017_max_unstack)){writeRaster(evi2017_max_unstack[[i]], file=filename[i], format="GTiff", overwrite = TRUE)}
+```
+
+--------------------------------------------------------------------------------
+# Vegetation - 2018
+## Read MODIS EVI data
+```{r}
+# import MODIS Veg Indices  
+# set working directory to where data is located
+setwd("D:/WCS/data/evi/GEE/MODIS_EVI-20210427T034248Z-001/MODIS_EVI/EVI2018")
+
+# list files based on prefix
+evi2018_list = list.files(getwd(), pattern="2018_") 
+
+# Create raster stack
+evi2018_r <- stack(evi2018_list)
+names(evi2018_r) 
+```
+
+
+## Calculate max evi by month per year
+### 2018
+```{r}
+#subset by month for 2018
+evi2018_1 <- raster::subset(evi2018_r, 1:2)
+evi2018_2 <- raster::subset(evi2018_r, 3:4)
+evi2018_3 <- raster::subset(evi2018_r, 5:6)
+evi2018_4 <- raster::subset(evi2018_r, 7:8)
+evi2018_5 <- raster::subset(evi2018_r, 9:10)
+evi2018_6 <- raster::subset(evi2018_r, 11:12)
+evi2018_7 <- raster::subset(evi2018_r, 13:14)
+evi2018_8 <- raster::subset(evi2018_r, 15:16)
+evi2018_9 <- raster::subset(evi2018_r, 17:18)
+evi2018_10 <- raster::subset(evi2018_r, 19:19)
+evi2018_11 <- raster::subset(evi2018_r, 20:21)
+evi2018_12 <- raster::subset(evi2018_r, 22:23)
+
+# calculate max evi by month for 2018
+evi2018_1_max <- calc(evi2018_1, fun = max, na.rm = T)
+evi2018_2_max <- calc(evi2018_2, fun = max, na.rm = T)
+evi2018_3_max <- calc(evi2018_3, fun = max, na.rm = T)
+evi2018_4_max <- calc(evi2018_4, fun = max, na.rm = T)
+evi2018_5_max <- calc(evi2018_5, fun = max, na.rm = T)
+evi2018_6_max <- calc(evi2018_6, fun = max, na.rm = T)
+evi2018_7_max <- calc(evi2018_7, fun = max, na.rm = T)
+evi2018_8_max <- calc(evi2018_8, fun = max, na.rm = T)
+evi2018_9_max <- calc(evi2018_9, fun = max, na.rm = T)
+evi2018_11_max <- calc(evi2018_11, fun = max, na.rm = T)
+evi2018_12_max <- calc(evi2018_12, fun = max, na.rm = T)
+
+# raster stack
+evi2018_max_stack <- stack(evi2018_1_max, evi2018_2_max, evi2018_3_max, 
+                           evi2018_4_max, evi2018_5_max, evi2018_6_max, 
+                           evi2018_7_max, evi2018_8_max, evi2018_9_max, 
+                           evi2018_10, evi2018_11_max, evi2018_12_max)
+```
+
+## Export EVI Max data 2018
+```{r}
+#set wd for output
+setwd("D:/WCS/data/evi/r_outputs")
+
+# name output rasters
+date <- seq(as.Date("2018/01/01"), by = "month", length.out = 12)
+month <- substr(date,1, 7)
+
+filename = paste0("evi_",month)
+names(evi2018_max_stack) <- filename
+
+# write raster stack
+evi2018_max_unstack <- unstack(evi2018_max_stack)
+names(evi2018_max_unstack) <- names(evi2018_max_stack)
+for(i in seq_along(evi2018_max_unstack)){writeRaster(evi2018_max_unstack[[i]], file=filename[i], format="GTiff", overwrite = TRUE)}
+```
+
+--------------------------------------------------------------------------------
+# Vegetation - 2019
+## Read MODIS EVI data
+```{r}
+# import MODIS Veg Indices  
+# set working directory to where data is located
+setwd("D:/WCS/data/evi/GEE/MODIS_EVI-20210427T034248Z-001/MODIS_EVI/EVI2019")
+
+# list files based on prefix
+evi2019_list = list.files(getwd(), pattern="2019_") 
+
+# Create raster stack
+evi2019_r <- stack(evi2019_list)
+names(evi2019_r) 
+```
+
+
+## Calculate max evi by month per year
+### 2019
+```{r}
+#subset by month for 2019
+evi2019_1 <- raster::subset(evi2019_r, 1:2)
+evi2019_2 <- raster::subset(evi2019_r, 3:4)
+evi2019_3 <- raster::subset(evi2019_r, 5:6)
+evi2019_4 <- raster::subset(evi2019_r, 7:8)
+evi2019_5 <- raster::subset(evi2019_r, 9:10)
+evi2019_6 <- raster::subset(evi2019_r, 11:12)
+evi2019_7 <- raster::subset(evi2019_r, 13:14)
+evi2019_8 <- raster::subset(evi2019_r, 15:16)
+evi2019_9 <- raster::subset(evi2019_r, 17:18)
+evi2019_10 <- raster::subset(evi2019_r, 19:19)
+evi2019_11 <- raster::subset(evi2019_r, 20:21)
+evi2019_12 <- raster::subset(evi2019_r, 22:23)
+
+# calculate max evi by month for 2019
+evi2019_1_max <- calc(evi2019_1, fun = max, na.rm = T)
+evi2019_2_max <- calc(evi2019_2, fun = max, na.rm = T)
+evi2019_3_max <- calc(evi2019_3, fun = max, na.rm = T)
+evi2019_4_max <- calc(evi2019_4, fun = max, na.rm = T)
+evi2019_5_max <- calc(evi2019_5, fun = max, na.rm = T)
+evi2019_6_max <- calc(evi2019_6, fun = max, na.rm = T)
+evi2019_7_max <- calc(evi2019_7, fun = max, na.rm = T)
+evi2019_8_max <- calc(evi2019_8, fun = max, na.rm = T)
+evi2019_9_max <- calc(evi2019_9, fun = max, na.rm = T)
+evi2019_11_max <- calc(evi2019_11, fun = max, na.rm = T)
+evi2019_12_max <- calc(evi2019_12, fun = max, na.rm = T)
+
+# raster stack
+evi2019_max_stack <- stack(evi2019_1_max, evi2019_2_max, evi2019_3_max, 
+                           evi2019_4_max, evi2019_5_max, evi2019_6_max, 
+                           evi2019_7_max, evi2019_8_max, evi2019_9_max, 
+                           evi2019_10, evi2019_11_max, evi2019_12_max)
+```
+
+## Export EVI Max data 2019
+```{r}
+#set wd for output
+setwd("D:/WCS/data/evi/r_outputs")
+
+# name output rasters
+date <- seq(as.Date("2019/01/01"), by = "month", length.out = 12)
+month <- substr(date,1, 7)
+
+filename = paste0("evi_",month)
+names(evi2019_max_stack) <- filename
+
+# write raster stack
+evi2019_max_unstack <- unstack(evi2019_max_stack)
+names(evi2019_max_unstack) <- names(evi2019_max_stack)
+for(i in seq_along(evi2019_max_unstack)){writeRaster(evi2019_max_unstack[[i]], file=filename[i], format="GTiff", overwrite = TRUE)}
+```
+
+--------------------------------------------------------------------------------
+# Vegetation - 2020
+## Read MODIS EVI data
+```{r}
+# import MODIS Veg Indices  
+# set working directory to where data is located
+setwd("D:/WCS/data/evi/GEE/MODIS_EVI-20210427T034248Z-001/MODIS_EVI/EVI2020")
+
+# list files based on prefix
+evi2020_list = list.files(getwd(), pattern="2020_") 
+
+# Create raster stack
+evi2020_r <- stack(evi2020_list)
+names(evi2020_r) 
+```
+
+
+## Calculate max evi by month per year
+### 2020
+```{r}
+#subset by month for 2020
+evi2020_1 <- raster::subset(evi2020_r, 1:2)
+evi2020_2 <- raster::subset(evi2020_r, 3:4)
+evi2020_3 <- raster::subset(evi2020_r, 5:6)
+evi2020_4 <- raster::subset(evi2020_r, 7:8)
+evi2020_5 <- raster::subset(evi2020_r, 9:10)
+evi2020_6 <- raster::subset(evi2020_r, 11:12)
+evi2020_7 <- raster::subset(evi2020_r, 13:14)
+evi2020_8 <- raster::subset(evi2020_r, 15:16)
+evi2020_9 <- raster::subset(evi2020_r, 17:18)
+evi2020_10 <- raster::subset(evi2020_r, 19:20)
+evi2020_11 <- raster::subset(evi2020_r, 21:21)
+evi2020_12 <- raster::subset(evi2020_r, 22:23)
+
+# calculate max evi by month for 2020
+evi2020_1_max <- calc(evi2020_1, fun = max, na.rm = T)
+evi2020_2_max <- calc(evi2020_2, fun = max, na.rm = T)
+evi2020_3_max <- calc(evi2020_3, fun = max, na.rm = T)
+evi2020_4_max <- calc(evi2020_4, fun = max, na.rm = T)
+evi2020_5_max <- calc(evi2020_5, fun = max, na.rm = T)
+evi2020_6_max <- calc(evi2020_6, fun = max, na.rm = T)
+evi2020_7_max <- calc(evi2020_7, fun = max, na.rm = T)
+evi2020_8_max <- calc(evi2020_8, fun = max, na.rm = T)
+evi2020_9_max <- calc(evi2020_9, fun = max, na.rm = T)
+evi2020_10_max <- calc(evi2020_10, fun = max, na.rm = T)
+evi2020_12_max <- calc(evi2020_12, fun = max, na.rm = T)
+
+# raster stack
+evi2020_max_stack <- stack(evi2020_1_max, evi2020_2_max, evi2020_3_max, 
+                           evi2020_4_max, evi2020_5_max, evi2020_6_max, 
+                           evi2020_7_max, evi2020_8_max, evi2020_9_max, 
+                           evi2020_10_max, evi2020_11, evi2020_12_max)
+```
+
+## Export EVI Max data 2020
+```{r}
+#set wd for output
+setwd("D:/WCS/data/evi/r_outputs")
+
+# name output rasters
+date <- seq(as.Date("2020/01/01"), by = "month", length.out = 12)
+month <- substr(date,1, 7)
+
+filename = paste0("evi_",month)
+names(evi2020_max_stack) <- filename
+
+# write raster stack
+evi2020_max_unstack <- unstack(evi2020_max_stack)
+names(evi2020_max_unstack) <- names(evi2020_max_stack)
+for(i in seq_along(evi2020_max_unstack)){writeRaster(evi2020_max_unstack[[i]], file=filename[i], format="GTiff", overwrite = TRUE)}
 ```
