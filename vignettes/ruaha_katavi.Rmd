@@ -24,7 +24,6 @@ library(sf)
 ## Read Boundary SA Shapefile
 ```{r}
 RKL <- st_read("C:/Users/Caroline/Documents/Graduate Courses/Spring 2021 Courses/GEOG 382/Project/WCS/inst/extdata/boundary/RKL.shp")
-RKL_proj <- st_read("C:/Users/Caroline/Documents/Graduate Courses/Spring 2021 Courses/GEOG 382/Project/WCS/inst/extdata/boundary/RKL_proj.vct")
 ```
 
 # Precipitation
@@ -58,6 +57,15 @@ precip_clip_unstack <- unstack(precip_clip)
 names(precip_clip_unstack) <- names(precip_clip)
 #outputnames <- paste(seq_along(precip_clip_unstack), ".tiff",sep="")
 for(i in seq_along(precip_clip_unstack)){writeRaster(precip_clip_unstack[[i]], file=precip_list[i], overwrite = TRUE)}
+```
+
+# truncate file names 
+```{r}
+fout <- gsub("wc2.1_2.5m_", "", precip_list)
+
+for (i in 1:length(precip_list)){ 
+   file.rename(from=precip_list[i], to= fout[i]) 
+}
 ```
 
 ## Climate Spatial Analysis

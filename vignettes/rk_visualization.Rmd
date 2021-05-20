@@ -1,0 +1,163 @@
+---
+title: "RK_Visualizations"
+author: "Caroline Williams"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: github
+vignette: >
+  %\VignetteIndexEntry{RK_Calculations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Import Libraries
+```{r}
+library(sf)
+library(dplyr)
+library(cowplot)
+library(ggplot2)
+library(gganimate)
+library(babynames)
+library(hrbrthemes)
+```
+
+# Figures
+
+## Set Working Directory
+```{r}
+setwd("C:/Users/Caroline/Documents/temp/csv/")
+```
+
+## Read in Data
+```{r}
+annual <- readxl::read_xlsx("inst/extdata/csv/annual.xlsx")
+monthly <- readxl::read_xlsx("inst/extdata/csv/monthly.xlsx")
+```
+
+
+## Surface Water
+### Process
+```{r}
+sw <- annual %>% select(Year, Ruaha_SeasonalWater, Katavi_SeasonalWater, In_Between_SeasonalWater, In_Between_PermanentWater) %>% slice(1:20)
+```
+
+### Annual
+```{r}
+colors <- c("Ruaha" = "#4472C4", "Katavi" = "#ED7D31", "In Between" = "#A5A5A5", "In Between Permanent" = "#525252")
+
+sw1 <- ggplot(sw) + 
+  geom_line(aes(x = Year, y = Ruaha_SeasonalWater, color = "Ruaha"), size = 1.25) + 
+  geom_line(aes(x = Year, y = Katavi_SeasonalWater, color = "Katavi"), size = 1.25) + 
+  geom_line(aes(x = Year, y = In_Between_SeasonalWater, color = "In Between"), size = 1.25) + 
+  #geom_line(aes(x = Year, y = In_Between_PermanentWater, color = "In Between Permanent"), size = 1.5) +
+  scale_color_manual(values = colors, guide = guide_legend(reverse = TRUE, direction = "horizontal")) +
+  labs(x = "Year",
+       y = "Number of pixels",
+       color = "") +
+  ggtitle("Seasonal Surface Water 2000 to 2019") + 
+  theme_light() + 
+  theme(legend.position="top", plot.title = element_text(hjust = 0.5))+
+  theme(plot.title = element_text(size=14))
+```
+
+```{r}
+colors <- c("Ruaha Seasonal" = "#4472C4", "Katavi Seasonal" = "#ED7D31", "In Between Seasonal" = "#A5A5A5", "In Between Permanent" = "#525252")
+
+sw2 <- ggplot(sw) + 
+  geom_line(aes(x = Year, y = Ruaha_SeasonalWater, color = "Ruaha Seasonal"), size = 1.25) + 
+  geom_line(aes(x = Year, y = Katavi_SeasonalWater, color = "Katavi Seasonal"), size = 1.25) + 
+  geom_line(aes(x = Year, y = In_Between_SeasonalWater, color = "In Between Seasonal"), size = 1.25) + 
+  geom_line(aes(x = Year, y = In_Between_PermanentWater, color = "In Between Permanent"), size = 1.25) +
+  scale_color_manual(values = colors, guide = guide_legend(reverse = TRUE, direction = "horizontal")) +
+  labs(x = "Year",
+       y = "Number of pixels",
+       color = "") +
+  ggtitle("Surface Water 2000 to 2019") + 
+  theme_light() + 
+  theme(legend.position="top", plot.title = element_text(hjust = 0.5))+
+  theme(plot.title = element_text(size=14))
+```
+
+```{r}
+colors <- c("Ruaha Seasonal" = "#4472C4", "Katavi Seasonal" = "#ED7D31", "In Between Seasonal" = "#A5A5A5", "In Between Permanent" = "#525252")
+
+sw3 <- ggplot(sw) + 
+  geom_line(aes(x = Year, y = In_Between_PermanentWater, color = "In Between Permanent"), size = 1.25) +
+  scale_color_manual(values = colors, guide = guide_legend(reverse = TRUE, direction = "horizontal")) +
+  labs(x = "Year",
+       y = "Number of pixels",
+       color = "") +
+  ggtitle("Permanent Surface Water 2000 to 2019") + 
+  theme_light() + 
+  theme(legend.position="top", plot.title = element_text(hjust = 0.5))+
+  theme(plot.title = element_text(size=14))
+```
+
+```{r}
+ggsave(sw1, file = "figures/seasonal_surface_water.png", dpi = 700) # adjust dpi accordingly
+ggsave(sw2, file = "figures/surface_water.png", dpi = 700) # adjust dpi accordingly
+ggsave(sw3, file = "figures/permanent_surface_water.png", dpi = 700) # adjust dpi accordingly
+```
+
+## EVI
+### Process
+```{r}
+evi <- annual %>% select(Year, Ruaha_EVI, Katavi_EVI, In_Between_EVI, Total_SA_EVI)
+```
+
+### Annual
+```{r}
+colors <- c("Ruaha" = "#4472C4", "Katavi" = "#ED7D31", "In Between" = "#A5A5A5")
+
+evi1 <- ggplot(evi) + 
+  geom_line(aes(x = Year, y = Ruaha_EVI, color = "Ruaha"), size = 1.25) + 
+  geom_line(aes(x = Year, y = Katavi_EVI, color = "Katavi"), size = 1.25) + 
+  geom_line(aes(x = Year, y = In_Between_EVI, color = "In Between"), size = 1.25) +
+  scale_color_manual(values = colors, guide = guide_legend(reverse = TRUE, direction = "horizontal")) +
+  labs(x = "Year",
+       y = "EVI",
+       color = "") +
+  ggtitle("Mean EVI 2000 to 2020") + 
+  theme_light() + 
+  theme(legend.position="top", plot.title = element_text(hjust = 0.5))+
+  theme(plot.title = element_text(size=14))
+```
+
+```{r}
+ggsave(evi1, file = "figures/evi.png", dpi = 700) # adjust dpi accordingly
+```
+
+
+## Precipitation
+### Process
+```{r}
+prec <- annual %>% select(Year, Ruaha_Prec, Katavi_Prec, In_Between_Prec, Total_SA_Prec) %>% slice(1:19)
+```
+
+### Annual
+```{r}
+colors <- c("Ruaha" = "#4472C4", "Katavi" = "#ED7D31", "In Between" = "#A5A5A5")
+
+prec1 <- ggplot(prec) + 
+  geom_line(aes(x = Year, y = Ruaha_Prec, color = "Ruaha"), size = 1.25) + 
+  geom_line(aes(x = Year, y = Katavi_Prec, color = "Katavi"), size = 1.25) + 
+  geom_line(aes(x = Year, y = In_Between_Prec, color = "In Between"), size = 1.25) +
+  scale_color_manual(values = colors, guide = guide_legend(reverse = TRUE, direction = "horizontal")) +
+  labs(x = "Year",
+       y = "Precipitation (mm)",
+       color = "") +
+  ggtitle("Mean Precipitation 2000 to 2018") + 
+  theme_light() + 
+  theme(legend.position="top", plot.title = element_text(hjust = 0.5))+
+  theme(plot.title = element_text(size=12))
+```
+
+```{r}
+ggsave(prec1, file = "figures/precipitation.png", dpi = 700) # adjust dpi accordingly
+```
+
